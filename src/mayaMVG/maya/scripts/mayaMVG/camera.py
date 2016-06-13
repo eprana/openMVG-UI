@@ -7,7 +7,7 @@ def mvgGetCameraFromView(viewName):
     return cmds.modelPanel(viewName, q=True, cam=True)
 
 def mvgScaleLocator(scale):
-    cameraList = pm.ls(type='camera')
+    cameraList = cmds.listRelatives('mvgRoot', type='camera', allDescendents=True, fullPath=True)
     for c in cameraList:
         pm.setAttr( c.attr('locatorScale'), scale)
 
@@ -22,7 +22,7 @@ def setImagesPaths(abcFilePath, imageAttribute, imageSourceAttribute, thumbnailA
   projectPath = os.path.dirname(abcFilePath)
   imageDir = os.path.join(projectPath, 'undistort/proxy/')
   thumbnailDir = os.path.join(projectPath, 'undistort/thumbnail/')
-  cameraList = cmds.ls(ca=True)
+  cameraList = cmds.listRelatives('mvgRoot', type='camera', allDescendents=True, fullPath=True)
   for c in cameraList:
     if not cmds.attributeQuery(imageAttribute, node=c, exists=True):
       continue
@@ -46,7 +46,7 @@ def mapImagesPaths(imageAttribute, thumbnailAttribute, abcFilePath):
   imageDir = os.path.join(projectPath, 'undistort/proxy/')
   thumbnailDir = os.path.join(projectPath, 'undistort/thumbnail/')
 
-  cameraList = cmds.ls(ca=True)
+  cameraList = cmds.listRelatives('mvgRoot', type='camera', allDescendents=True, fullPath=True)
   for c in cameraList:      
     if not cmds.attributeQuery(imageAttribute, node=c, exists=True) or not imageDir:
       continue

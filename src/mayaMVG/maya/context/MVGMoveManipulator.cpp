@@ -596,7 +596,7 @@ void MVGMoveManipulator::computePCPoints(M3dView& view, MPointArray& finalWSPoin
             }
             assert(movingVertexIDInThisFace != -1);
             MPointArray worldSpacePoints;
-            MVGPointCloud cloud(MVGProject::_CLOUD);
+            MVGPointCloud cloud = MVGProject::getPointCloud();
             if(cloud.projectPoints(view, _visiblePointCloudItems, cameraSpacePoints,
                                    worldSpacePoints))
             {
@@ -640,7 +640,7 @@ void MVGMoveManipulator::computePCPoints(M3dView& view, MPointArray& finalWSPoin
             }
             // Project mouse on point cloud
             MPoint projectedMouseWS;
-            MVGPointCloud cloud(MVGProject::_CLOUD);
+            MVGPointCloud cloud = MVGProject::getPointCloud();
             MPointArray constraintedWSPoints;
             constraintedWSPoints.append(_onPressIntersectedComponent.edge->vertex1->worldPosition);
             constraintedWSPoints.append(_onPressIntersectedComponent.edge->vertex2->worldPosition);

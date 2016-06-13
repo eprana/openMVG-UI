@@ -1,5 +1,6 @@
 #include "mayaMVG/core/MVGProject.hpp"
 #include "mayaMVG/core/MVGCamera.hpp"
+#include "mayaMVG/core/MVGPointCloud.hpp"
 #include "mayaMVG/core/MVGMesh.hpp"
 #include "mayaMVG/core/MVGLog.hpp"
 #include "mayaMVG/maya/context/MVGContextCmd.hpp"
@@ -114,6 +115,48 @@ std::vector<MVGProject> MVGProject::list()
     return list;
 }
 
+// static
+MVGPointCloud MVGProject::getPointCloud()
+{
+    MDagPath pointCloudGroup;
+    getPointcloudGroupPath(pointCloudGroup);
+    MDagPath pointCloudDagPath;
+    MDagPath::getAPathTo(pointCloudGroup.child(0), pointCloudDagPath);
+    pointCloudDagPath.extendToShape();
+
+    return MVGPointCloud(pointCloudDagPath);
+}
+
+// static
+void MVGProject::getRootPath(MDagPath& dagpath)
+{
+    MStatus status;
+    status = MVGMayaUtil::getDagPathByName(_PROJECT.c_str(), dagpath);
+    CHECK(status)
+}
+
+// static
+void MVGProject::getCameraGroupPath(MDagPath& dagpath)
+{
+    MDagPath rootPath;
+    getRootPath(rootPath);
+
+    // TODO : check name ?
+    MObject cameraParent = rootPath.child(0);
+    MDagPath::getAPathTo(cameraParent, dagpath);
+}
+
+// static
+void MVGProject::getPointcloudGroupPath(MDagPath& dagpath)
+{
+    MDagPath rootPath;
+    getRootPath(rootPath);
+
+    // TODO : check name ?
+    MObject cloudParent = rootPath.child(1);
+    MDagPath::getAPathTo(cloudParent, dagpath);
+}
+
 bool MVGProject::scaleScene(const double scaleSize) const
 {
     // Check for root node
@@ -222,14 +265,14 @@ bool MVGProject::scaleScene(const double scaleSize) const
 void MVGProject::clear()
 {
     MDagPath camerasDagPath;
-    MVGMayaUtil::getDagPathByName(MVGProject::_CAMERAS_GROUP.c_str(), camerasDagPath);
+    getCameraGroupPath(camerasDagPath);
     for(int i = camerasDagPath.childCount(); i > 0; --i)
     {
         MObject child = camerasDagPath.child(i - 1);
         MGlobal::deleteNode(child);
     }
     MDagPath pointCloudDagPath;
-    MVGMayaUtil::getDagPathByName(MVGProject::_CLOUD_GROUP.c_str(), pointCloudDagPath);
+    getPointcloudGroupPath(pointCloudDagPath);
     for(int i = pointCloudDagPath.childCount(); i > 0; --i)
     {
         MObject child = pointCloudDagPath.child(i - 1);
@@ -281,30 +324,31 @@ void MVGProject::selectMeshes(const std::vector<std::string>& meshes) const
 void MVGProject::unlockProject() const
 {
     // Camera group
-    MObject cameraGroup;
-    const MString cameraGroupString(_CAMERAS_GROUP.c_str());
-    MVGMayaUtil::getObjectByName(cameraGroupString, cameraGroup);
+    MDagPath cameraGroupPath;
+    getCameraGroupPath(cameraGroupPath);
+    MObject cameraGroup = cameraGroupPath.node();
+
     unlockNode(cameraGroup);
 
     // Cloud group
-    MObject cloudGroup;
-    const MString cloudGroupString(_CLOUD_GROUP.c_str());
-    MVGMayaUtil::getObjectByName(cloudGroupString, cloudGroup);
+    MDagPath pointcloudGroupPath;
+    getPointcloudGroupPath(pointcloudGroupPath);
+    MObject cloudGroup = pointcloudGroupPath.node();
     unlockNode(cloudGroup);
 }
 
 void MVGProject::lockProject() const
 {
     // Camera group
-    MObject cameraGroup;
-    const MString cameraGroupString(_CAMERAS_GROUP.c_str());
-    MVGMayaUtil::getObjectByName(cameraGroupString, cameraGroup);
+    MDagPath cameraGroupPath;
+    getCameraGroupPath(cameraGroupPath);
+    MObject cameraGroup = cameraGroupPath.node();
     lockNode(cameraGroup);
 
     // Cloud group
-    MObject cloudGroup;
-    const MString cloudGroupString(_CLOUD_GROUP.c_str());
-    MVGMayaUtil::getObjectByName(cloudGroupString, cloudGroup);
+    MDagPath pointcloudGroupPath;
+    getPointcloudGroupPath(pointcloudGroupPath);
+    MObject cloudGroup = pointcloudGroupPath.node();
     lockNode(cloudGroup);
 }
 

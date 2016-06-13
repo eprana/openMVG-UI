@@ -179,7 +179,7 @@ void MVGProjectWrapper::loadABC(const QString& abcFilePath)
 
     // Load abc
     MString cmd;
-    cmd.format("AbcImport -mode import \"^1s\"", abcFilePath.toStdString().c_str());
+    cmd.format("file -import -type \"Alembic\" \"^1s\"", abcFilePath.toStdString().c_str());
     status = MGlobal::executeCommand(cmd);
     CHECK_RETURN(status)
 

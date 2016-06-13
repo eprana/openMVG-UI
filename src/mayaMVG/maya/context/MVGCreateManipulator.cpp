@@ -161,14 +161,12 @@ MStatus MVGCreateManipulator::doPress(M3dView& view)
     }
     // set this view as the active view
     _cache->setActiveView(view);
-
     // TODO clear the other views?
 
     // check if we are intersecting w/ a mesh component
     _onPressCSPoint = getMousePosition(view);
     _cache->checkIntersection(10.0, _onPressCSPoint);
     _onPressIntersectedComponent = _cache->getIntersectedComponent();
-
     return MPxManipulatorNode::doPress(view);
 }
 
@@ -286,7 +284,7 @@ void MVGCreateManipulator::computeFinalWSPoints(M3dView& view)
         MPointArray previewCSPoints = _cameraIDToClickedCSPoints.second;
         previewCSPoints.append(getMousePosition(view));
         // project clicked points on point cloud
-        MVGPointCloud cloud(MVGProject::_CLOUD);
+        MVGPointCloud cloud = MVGProject::getPointCloud();
         cloud.projectPoints(view, _visiblePointCloudItems, previewCSPoints, _finalWSPoints);
         return;
     }
@@ -340,7 +338,7 @@ bool MVGCreateManipulator::computePCPoints(M3dView& view, MPointArray& finalWSPo
 
     // Project mouse on point cloud
     MPoint projectedMouseWS;
-    MVGPointCloud cloud(MVGProject::_CLOUD);
+    MVGPointCloud cloud = MVGProject::getPointCloud();
     MPointArray constraintedPoints;
     constraintedPoints.append(_onPressIntersectedComponent.edge->vertex1->worldPosition);
     constraintedPoints.append(_onPressIntersectedComponent.edge->vertex2->worldPosition);

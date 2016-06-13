@@ -163,7 +163,7 @@ std::vector<MVGCamera> MVGCamera::getCameras()
     std::vector<MVGCamera> list;
     // Retrieve mayaMVG camera node
     MDagPath cameraDagPath;
-    status = MVGMayaUtil::getDagPathByName(MVGProject::_CAMERAS_GROUP.c_str(), cameraDagPath);
+    MVGProject::getCameraGroupPath(cameraDagPath);
     MFnDagNode cameraDagNode(cameraDagPath);
     for(int i = 0; i < cameraDagNode.childCount(); ++i)
     {
@@ -281,7 +281,7 @@ void MVGCamera::getVisibleItems(std::vector<MVGPointCloudItem>& visibleItems) co
     MIntArray visibleIndexes;
     status = MVGMayaUtil::getIntArrayAttribute(_dagpath.node(), _MVG_ITEMS, visibleIndexes);
     CHECK_RETURN(status)
-    MVGPointCloud pointCloud(MVGProject::_CLOUD);
+    MVGPointCloud pointCloud = MVGProject::getPointCloud();
     pointCloud.getItems(visibleItems, visibleIndexes);
 }
 

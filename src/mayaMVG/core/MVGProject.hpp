@@ -25,6 +25,10 @@ public:
 
 public:
     static std::vector<MVGProject> list();
+    static MVGPointCloud getPointCloud();
+    static void getRootPath(MDagPath& dagpath);
+    static void getCameraGroupPath(MDagPath& dagpath);
+    static void getPointcloudGroupPath(MDagPath& dagpath);
 
 public:
     bool scaleScene(const double scaleSize) const;
